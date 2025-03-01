@@ -45,10 +45,7 @@ class ViewModel(
 			KeyEvent("d") -> changeMode("drop")
 			KeyEvent("Enter") -> saveAndExit()
 			KeyEvent("Escape"), KeyEvent("q") -> events.tryEmit(Event.Exit(1))
-			else -> {
-				println(event.key)
-				return false
-			}
+			else -> return false
 		}
 		return true
 	}
