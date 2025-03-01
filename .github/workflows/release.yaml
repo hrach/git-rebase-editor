@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 21
+
+      - name: Assemble & Linters
+        run: ./gradlew :linkReleaseExecutableLinuxArm64 :linkReleaseExecutableLinuxX64 :linkReleaseExecutableMacosArm64 :linkReleaseExecutableMacosX64 :linkReleaseExecutableMingwX64
+
+      - name: Rename executables
+        run: |
+          mkdir build/out
+          cd build/bin/linuxArm64/releaseExecutable/ && mv git-rebase-editor.kexe git-rebase-editor && zip ../../../out/git-rebase-editor-linux-arm64.zip git-rebase-editor && cd ../../../../
+          cd build/bin/linuxX64/releaseExecutable/ && mv git-rebase-editor.kexe git-rebase-editor && zip ../../../out/git-rebase-editor-linux-x64.zip git-rebase-editor && cd ../../../../
+          cd build/bin/macosArm64/releaseExecutable/ && mv git-rebase-editor.kexe git-rebase-editor && zip ../../../out/git-rebase-editor-macos-arm64.zip git-rebase-editor && cd ../../../../
+          cd build/bin/macosX64/releaseExecutable/ && mv git-rebase-editor.kexe git-rebase-editor && zip ../../../out/git-rebase-editor-macos-x64.zip git-rebase-editor && cd ../../../../
+          cd build/bin/mingwX64/releaseExecutable/ && zip ../../../out/git-rebase-editor-windows-x64.zip git-rebase-editor.exe && cd ../../../../
+
+      - name: Upload APK to release
+        uses: softprops/action-gh-release@v2
+        id: release
+        with:
+          files: build/out/*.zip
