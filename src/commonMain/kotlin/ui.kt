@@ -1,6 +1,10 @@
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.jakewharton.mosaic.LocalTerminal
 import com.jakewharton.mosaic.layout.background
 import com.jakewharton.mosaic.layout.fillMaxWidth
@@ -19,15 +23,31 @@ import com.jakewharton.mosaic.ui.TextStyle
 fun App(viewModel: ViewModel) {
 	val terminal = LocalTerminal.current
 	val selectedLine by viewModel.selectedLine.collectAsState()
+	val content by viewModel.content.collectAsState()
+	// subtraction of one is necessary, because there is a line with a cursor at the bottom, which moves up all the content
+	val height = terminal.size.height - 1
+	var offset by remember { mutableIntStateOf(0) }
+	LaunchedEffect(selectedLine.first) {
+		if (selectedLine.first < offset) {
+			offset -= 1
+		}
+	}
+	LaunchedEffect(selectedLine.last) {
+		if (selectedLine.last > offset + height - 1) {
+			offset += 1
+		}
+	}
+
 	Box(
 		Modifier
 			.width(terminal.size.width)
-			.height(terminal.size.height - 1) // subtraction of one is necessary, because there is a line with a cursor at the bottom, which moves up all the content
+			.height(height)
 			.onKeyEvent { event -> viewModel.onKeyEvent(event) }
 	) {
 		Column {
-			val content by viewModel.content.collectAsState()
 			content.forEachIndexed { i, line ->
+				if (i < offset) return@forEachIndexed
+				if (i > offset + height - 1) return@forEachIndexed
 				val selected = i in selectedLine
 				Row(
 					modifier = Modifier
