@@ -1,6 +1,7 @@
 import androidx.compose.runtime.LaunchedEffect
 import com.jakewharton.mosaic.runMosaicBlocking
-import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 import kotlinx.io.files.Path
 import kotlin.system.exitProcess
 
@@ -12,19 +13,18 @@ fun main(args: Array<String>) {
 
 	val viewModel = ViewModel(Path(file))
 
-	runMosaicBlocking {
-		LaunchedEffect(viewModel) {
-			viewModel.events.collect { event ->
-				when (event) {
-					is ViewModel.Event.Exit -> exitProcess(event.code)
-				}
+	try {
+		runMosaicBlocking {
+			App(viewModel)
+
+			LaunchedEffect(viewModel) {
+				viewModel.events.filterIsInstance<ViewModel.Event.Exit>().first()
+				throw ExitException()
 			}
 		}
-
-		App(viewModel)
-
-		LaunchedEffect(Unit) {
-			awaitCancellation()
-		}
+	} catch (e: ExitException) {
+		// no-op
 	}
 }
+
+class ExitException : RuntimeException()

@@ -12,7 +12,7 @@ class ViewModel(
 	private val path: Path,
 ) {
 	sealed interface Event {
-		data class Exit(val code: Int = 0) : Event
+		data object Exit : Event
 	}
 
 	val events = MutableSharedFlow<Event>(extraBufferCapacity = 1)
@@ -44,7 +44,7 @@ class ViewModel(
 			KeyEvent("f") -> changeMode("fixup")
 			KeyEvent("d") -> changeMode("drop")
 			KeyEvent("Enter") -> saveAndExit()
-			KeyEvent("Escape"), KeyEvent("q") -> events.tryEmit(Event.Exit(1))
+			KeyEvent("Escape"), KeyEvent("q") -> events.tryEmit(Event.Exit)
 			else -> return false
 		}
 		return true
@@ -130,6 +130,6 @@ class ViewModel(
 		SystemFileSystem.sink(path).buffered().use {
 			it.writeString(toSave)
 		}
-		events.tryEmit(Event.Exit(0))
+		events.tryEmit(Event.Exit)
 	}
 }
