@@ -76,7 +76,7 @@ fun App(viewModel: ViewModel) {
 	}
 }
 
-private val LineRegexp = """^(pick|reword|edit|squash|fixup|exec|drop)\s+([a-z0-9]{7})\s+(.*)$""".toRegex()
+private val LineRegexp = """^(pick|reword|edit|squash|fixup|exec|drop)\s+([a-z0-9]{7,40})\s+(.*)$""".toRegex()
 
 private val Blue = Color(59, 120, 255)
 private val Gray = Color(128, 128, 128)
