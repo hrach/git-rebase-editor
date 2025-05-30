@@ -20,7 +20,8 @@ class ViewModel(
 	val selectedLine: MutableStateFlow<IntRange> = MutableStateFlow(-1..-1)
 
 	private var dirUp: Boolean = true
-	private val validLineRegexp = """^(pick|reword|edit|sqaush|fixup|drop).*""".toRegex()
+	private val commitLineRegexp = """^(pick|reword|edit|sqaush|fixup|drop).*""".toRegex()
+	private val updateRefLineRegexp = """^(#\s+)?update-ref.*""".toRegex()
 
 	init {
 		this.content.value = SystemFileSystem.source(path).buffered().use {
@@ -37,12 +38,12 @@ class ViewModel(
 			KeyEvent("ArrowDown", shift = true) -> extendSelectionDown()
 			KeyEvent("ArrowLeft") -> moveUp()
 			KeyEvent("ArrowRight") -> moveDown()
-			KeyEvent("p") -> changeMode("pick")
+			KeyEvent("p") -> changeMode("pick", "update-ref")
 			KeyEvent("r") -> changeMode("reword")
 			KeyEvent("e") -> changeMode("edit")
 			KeyEvent("s") -> changeMode("squash")
 			KeyEvent("f") -> changeMode("fixup")
-			KeyEvent("d") -> changeMode("drop")
+			KeyEvent("d") -> changeMode("drop", "# update-ref")
 			KeyEvent("Enter") -> saveAndExit()
 			KeyEvent("Escape"), KeyEvent("q") -> events.tryEmit(Event.Exit)
 			else -> return false
@@ -113,12 +114,14 @@ class ViewModel(
 		}
 	}
 
-	private fun changeMode(newMode: String) {
+	private fun changeMode(newMode: String, updateRefNewMode: String? = null) {
 		content.update {
 			val lines = it.toMutableList()
 			selectedLine.value.forEach { i ->
-				if (lines[i].matches(validLineRegexp)) {
+				if (lines[i].matches(commitLineRegexp)) {
 					lines[i] = newMode + " " + lines[i].substringAfter(" ")
+				} else if (updateRefNewMode != null && lines[i].matches(updateRefLineRegexp)) {
+					lines[i] = updateRefNewMode + " " + lines[i].removePrefix("# ").substringAfter(" ")
 				}
 			}
 			lines
