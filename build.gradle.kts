@@ -1,6 +1,6 @@
 plugins {
-	kotlin("multiplatform") version "2.2.0"
-	kotlin("plugin.compose") version "2.2.0"
+	kotlin("multiplatform") version "2.2.10"
+	kotlin("plugin.compose") version "2.2.10"
 }
 
 kotlin {
