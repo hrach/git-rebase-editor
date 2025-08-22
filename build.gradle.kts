@@ -13,7 +13,7 @@ kotlin {
 	mingwX64 { binaries { executable() } }
 
 	sourceSets.commonMain.dependencies {
-		implementation("com.jakewharton.mosaic:mosaic-runtime:0.16.0")
+		implementation("com.jakewharton.mosaic:mosaic-runtime:0.18.0")
 		implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.8.0")
 		implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 	}
