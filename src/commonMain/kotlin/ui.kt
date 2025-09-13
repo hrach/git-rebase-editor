@@ -5,8 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.jakewharton.mosaic.LocalTerminal
+import com.jakewharton.mosaic.LocalTerminalState
 import com.jakewharton.mosaic.layout.background
+import com.jakewharton.mosaic.layout.fillMaxSize
 import com.jakewharton.mosaic.layout.fillMaxWidth
 import com.jakewharton.mosaic.layout.height
 import com.jakewharton.mosaic.layout.onKeyEvent
@@ -21,11 +22,11 @@ import com.jakewharton.mosaic.ui.TextStyle
 
 @Composable
 fun App(viewModel: ViewModel) {
-	val terminal = LocalTerminal.current
+	val terminal = LocalTerminalState.current
 	val selectedLine by viewModel.selectedLine.collectAsState()
 	val content by viewModel.content.collectAsState()
 	// subtraction of one is necessary, because there is a line with a cursor at the bottom, which moves up all the content
-	val height = terminal.size.height - 1
+	val height = terminal.size.rows - 1
 	var offset by remember { mutableIntStateOf(0) }
 	LaunchedEffect(selectedLine.first) {
 		if (selectedLine.first < offset) {
@@ -40,7 +41,7 @@ fun App(viewModel: ViewModel) {
 
 	Box(
 		Modifier
-			.width(terminal.size.width)
+			.width(terminal.size.columns)
 			.height(height)
 			.onKeyEvent { event -> viewModel.onKeyEvent(event) }
 	) {
