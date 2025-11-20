@@ -20,7 +20,7 @@ class ViewModel(
 	val selectedLine: MutableStateFlow<IntRange> = MutableStateFlow(-1..-1)
 
 	private var dirUp: Boolean = true
-	private val commitLineRegexp = """^(pick|reword|edit|sqaush|fixup|drop).*""".toRegex()
+	private val commitLineRegexp = """^(pick|reword|edit|squash|fixup|drop).*""".toRegex()
 	private val updateRefLineRegexp = """^(#\s+)?update-ref.*""".toRegex()
 
 	init {

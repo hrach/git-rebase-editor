@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
 				throw ExitException()
 			}
 		}
-	} catch (e: ExitException) {
+	} catch (_: ExitException) {
 		// no-op
 	}
 }
