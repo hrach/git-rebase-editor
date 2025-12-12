@@ -27,7 +27,10 @@ class ViewModel(
 		this.content.value = SystemFileSystem.source(path).buffered().use {
 			it.readString().lines()
 		}
-		this.selectedLine.value = 0..0
+		val lastInputLine = this.content.value.indexOfLast {
+			it.matches(commitLineRegexp) || it.matches(updateRefLineRegexp)
+		}.coerceAtLeast(0)
+		this.selectedLine.value = lastInputLine..lastInputLine
 	}
 
 	fun onKeyEvent(event: KeyEvent): Boolean {
