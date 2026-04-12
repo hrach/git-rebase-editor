@@ -31,7 +31,7 @@ jobs:
           cd build/bin/mingwX64/releaseExecutable/ && zip ../../../out/git-rebase-editor-windows-x64.zip git-rebase-editor.exe && cd ../../../../
 
       - name: Upload APK to release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         id: release
         with:
           files: build/out/*.zip
