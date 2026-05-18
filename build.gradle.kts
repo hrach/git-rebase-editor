@@ -15,6 +15,6 @@ kotlin {
 	sourceSets.commonMain.dependencies {
 		implementation("com.jakewharton.mosaic:mosaic-runtime:0.18.0")
 		implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.9.0")
-		implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+		implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
 	}
 }
